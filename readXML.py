@@ -29,7 +29,7 @@ for filename in os.listdir(XMLPATH):
     FILE = filename.split('.')[0]
     image_s_path = IMGPATH + '/' + FILE + '/img'
     itemlist = doc.getElementsByTagName('frame')
-    print(len(itemlist))
+    #print(len(itemlist))
     frame_id = 1
     for item in itemlist:
         targetlist = item.getElementsByTagName('target')
@@ -39,7 +39,6 @@ for filename in os.listdir(XMLPATH):
             targetID = str(img_id).zfill(5)
             image_path = image_s_path + targetID +'.jpg'
             image = cv2.imread(image_path)
-            print(image_path)
             box = target.getElementsByTagName('box')
             X = int(float(box[0].attributes['left'].value))
             Y = int(float(box[0].attributes['top'].value))
@@ -49,21 +48,24 @@ for filename in os.listdir(XMLPATH):
             speed = int(float(attribute[0].attributes['speed'].value))
 
             if (W >= 100 and speed > 1):
-                cv2.imshow('image', image)
+
                 ROI = image[Y:Y+W,X:X+W]
                 cv2.imshow('ROI', ROI)
                 save_name = FILE + '+FRAME_' + str(frame_id) +  '_IMG_' + str(img_id) +'.jpg'
                 SNAME = os.path.join(SPATH, save_name)
-                cv2.imwrite(SNAME, ROI)
-
+                #cv2.imwrite(SNAME, ROI)
+                cv2.rectangle(image, (X,Y), (X+W, Y+H), (0,0,255), 3)
                 reducedROI = cv2.resize(ROI, (32,32))
                 flatROI = reducedROI.flatten()
-                print('IMAGE_S_PATH - ' , image_s_path)
-                print('image_path - ', image_path)
-                print('store_path - ', SNAME)
-                engine.store_vector(flatROI, SNAME)
+                #print('IMAGE_S_PATH - ' , image_s_path)
+                #print('image_path - ', image_path)
+                #print('store_path - ', SNAME)
+                #engine.store_vector(flatROI, SNAME)
+            print(image_path)
+            cv2.imshow('image', image)
+            cv2.waitKey()
             img_id = img_id + 1
         frame_id = frame_id + 1
 
 
-redis_storage.store_hash_configuration(lshash)
+#redis_storage.store_hash_configuration(lshash)
