@@ -23,6 +23,8 @@ engine = Engine(dimension, lshashes=[lshash], storage=redis_storage, distance=Co
 bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
 bf_ham = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 orb = cv2.ORB()
+
+REDUCED_SEARCH_DIR = ''
 image = cv2.imread('CROPPED/MVI_20011+FRAME_183_IMG_1.jpg')
 resized = cv2.resize(image, (32,32))
 kp1, desc1 = sift.detectAndCompute(image, None)
@@ -31,8 +33,8 @@ kp1, desc1 = sift.detectAndCompute(image, None)
 
 # Get nearest neighbours
 MAX = 0.0
-cv2.imshow('SEARCH', image)
-cv2.waitKey()
+#cv2.imshow('SEARCH', image)
+#cv2.waitKey()
 match_image = None
 N = engine.neighbours(resized.flatten())
 for neighbors in N:
@@ -67,10 +69,10 @@ for neighbors in N:
     #s = ssim(resized, result_resized, multichannel=True)
     res = cv2.matchTemplate(resized,result_resized,cv2.TM_CCORR_NORMED)
     #print(res)
-    cv2.imshow('result', ROI)
+    #cv2.imshow('result', ROI)
     print(neighbors[1])
-    cv2.waitKey()
-cv2.imshow('match', match_image)
-cv2.waitKey()
-cv2.destroyAllWindows()
+    #cv2.waitKey()
+#cv2.imshow('match', match_image)
+#cv2.waitKey()
+#cv2.destroyAllWindows()
 #print(N)'''

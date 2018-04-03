@@ -1,7 +1,6 @@
 from xml.dom import minidom
 import cv2
 from nearpy import Engine
-from nearpy.hashes import RandomBinaryProjections
 from nearpy.hashes import RandomBinaryProjectionTree
 from redis import Redis
 import os

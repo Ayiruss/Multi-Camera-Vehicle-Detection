@@ -30,13 +30,15 @@ FILE = filename.split('.')[0]
 image_s_path = IMGPATH + '/' + FILE
 itemlist = doc.getElementsByTagName('frame')
 #print(len(itemlist))
-frame_id = 1
+
 for item in itemlist:
+    frame_id = int(item.attributes['num'].value)
     targetlist = item.getElementsByTagName('target')
     #target_id = target.getElementsByTagName('target')
     img_id = 1
+
     for target in targetlist:
-        targetID = str(img_id).zfill(5)
+        frameID = str(frame_id).zfill(5)
         '''image_path = image_s_path + targetID +'.jpg'
         image = cv2.imread(image_path)
         box = target.getElementsByTagName('box')
@@ -65,12 +67,18 @@ for item in itemlist:
         cv2.imshow('image', image)
         cv2.waitKey()
         img_id = img_id + 1'''
+
+
+
+
+
+
         target_id = target.attributes['id'].value
         file_directory = os.path.join(SPATH, str(target_id))
         if not os.path.exists(file_directory):
             os.makedirs(file_directory)
 
-        image_path = image_s_path + '/img' + targetID +'.jpg'
+        image_path = image_s_path + '/img' + frameID +'.jpg'
         print(image_path)
         image = cv2.imread(image_path)
         box = target.getElementsByTagName('box')
@@ -81,11 +89,11 @@ for item in itemlist:
         attribute = target.getElementsByTagName('attribute')
         speed = int(float(attribute[0].attributes['speed'].value))
 
-        if (W >= 100 and H >= 100 and speed > 1):
+        if ((W >= 100 or H >= 100) and  speed > 1):
 
             ROI = image[Y:Y+W,X:X+W]
             cv2.imshow('ROI', ROI)
-            save_name = FILE + '+FRAME_' + str(frame_id) + '_TAR_'+ str(targetID) + '.jpg'
+            save_name = FILE + '+FRAME_' + str(frame_id) + '_TAR_'+ str(target_id) + '.jpg'
             SNAME = os.path.join(file_directory, save_name)
             cv2.imwrite(SNAME, ROI)
 
@@ -94,7 +102,7 @@ for item in itemlist:
             #print('store_path - ', SNAME)
             #engine.store_vector(flatROI, SNAME)
 
-
+        img_id = img_id+1
 
 
     frame_id = frame_id + 1
