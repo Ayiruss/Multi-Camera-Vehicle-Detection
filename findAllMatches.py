@@ -23,7 +23,7 @@ engine = Engine(dimension, lshashes=[lshash], storage=redis_storage, distance=Co
 bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
 bf_ham = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 orb = cv2.ORB()
-SEARCH_FOLDER = ''
+SEARCH_FOLDER = '/media/student/DATA3/data_pool2/NVIDIA_AICity/Multi-Camera-Vehicle-Detection/REDUCED'
 
 for TARGET in os.listdir(SEARCH_FOLDER):
     for IMAGEFILE in os.listdir(TARGET):
