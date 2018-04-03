@@ -23,54 +23,60 @@ engine = Engine(dimension, lshashes=[lshash], storage=redis_storage, distance=Co
 bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
 bf_ham = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 orb = cv2.ORB()
+SEARCH_FOLDER = ''
 
-REDUCED_SEARCH_DIR = ''
-image = cv2.imread('CROPPED/MVI_20011+FRAME_183_IMG_1.jpg')
-resized = cv2.resize(image, (32,32))
-kp1, desc1 = sift.detectAndCompute(image, None)
-#okp1, odesc1 = orb.detectAndCompute(image, None)
-# Create random query vector
+for TARGET in os.listdir(SEARCH_FOLDER):
+    for IMAGEFILE in os.listdir(TARGET):
+        REDUCED_SEARCH_DIR = ''
+        image = cv2.imread(os.join(SEARCH_FOLDER, TARGET, IMAGEFILE))
+        resized = cv2.resize(image, (32,32))
+        kp1, desc1 = sift.detectAndCompute(image, None)
+        #okp1, odesc1 = orb.detectAndCompute(image, None)
+        # Create random query vector
 
-# Get nearest neighbours
-MAX = 0.0
-#cv2.imshow('SEARCH', image)
-#cv2.waitKey()
-match_image = None
-N = engine.neighbours(resized.flatten())
-for neighbors in N:
+        # Get nearest neighbours
+        MAX = 0.0
+        #cv2.imshow('SEARCH', image)
+        #cv2.waitKey()
+        match_name = None
+        match_image = None
+        N = engine.neighbours(resized.flatten())
+        for neighbors in N:
 
-    split = neighbors[1].split('_')
-    print(neighbors[1])
-    IMAGE_PATH = IMG_DIR + '/' + 'MVI_20012' + '/img' + str(split[4]).zfill(5) + '.jpg'
-    print(IMAGE_PATH)
-    X = int(split[7])
-    Y = int(split[8])
-    W = int(split[9])
-    H = int(split[10])
-    print(X, Y, W, H)
-    #print(IMAGE_PATH)
-    result = cv2.imread(IMAGE_PATH)
-    ROI = result[Y:Y+H, X:X+W]
-    result_resized = cv2.resize(ROI, (32,32))
-    kp2, desc2 = sift.detectAndCompute(ROI,None)
-    MIN = min(len(desc1), len(desc2))
-    print(MIN)
-    #okp2, odesc2 = orb.detectAndCompute(result, None)
-    matches = bf.match(desc1,desc2)
-    #matches = sorted(matches, key = lambda x:x.distance)
-    total = len(matches)
-    percent = float(float(total)/float(len(desc1)))
-    print('SIFT - ', total, 'Percentage : - ', percent)
-    #matches = bf_ham.match(odesc1, odesc2)
-    if percent > MAX:
-        MAX = percent
-        match_image = ROI
-    #print('ORB - ', len(matches))
-    #s = ssim(resized, result_resized, multichannel=True)
-    res = cv2.matchTemplate(resized,result_resized,cv2.TM_CCORR_NORMED)
-    #print(res)
-    #cv2.imshow('result', ROI)
-    print(neighbors[1])
+            split = neighbors[1].split('_')
+            print(neighbors[1])
+            IMAGE_PATH = IMG_DIR + '/' + 'MVI_20012' + '/img' + str(split[4]).zfill(5) + '.jpg'
+            print(IMAGE_PATH)
+            X = int(split[7])
+            Y = int(split[8])
+            W = int(split[9])
+            H = int(split[10])
+            print(X, Y, W, H)
+            #print(IMAGE_PATH)
+            result = cv2.imread(IMAGE_PATH)
+            ROI = result[Y:Y+H, X:X+W]
+            result_resized = cv2.resize(ROI, (32,32))
+            kp2, desc2 = sift.detectAndCompute(ROI,None)
+            MIN = min(len(desc1), len(desc2))
+            print(MIN)
+            #okp2, odesc2 = orb.detectAndCompute(result, None)
+            matches = bf.match(desc1,desc2)
+            #matches = sorted(matches, key = lambda x:x.distance)
+            total = len(matches)
+            percent = float(float(total)/float(len(desc1)))
+            print('SIFT - ', total, 'Percentage : - ', percent)
+            #matches = bf_ham.match(odesc1, odesc2)
+            if percent > MAX:
+                MAX = percent
+                match_image = ROI
+                match_name = neighbors[1]
+            #print('ORB - ', len(matches))
+            #s = ssim(resized, result_resized, multichannel=True)
+            res = cv2.matchTemplate(resized,result_resized,cv2.TM_CCORR_NORMED)
+            #print(res)
+            #cv2.imshow('result', ROI)
+            #print(neighbors[1])
+        print(match_name)
     #cv2.waitKey()
 #cv2.imshow('match', match_image)
 #cv2.waitKey()
